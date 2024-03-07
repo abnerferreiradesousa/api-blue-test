@@ -1,52 +1,199 @@
-# Desafio de Backend - API de Marcação de Consultas
+# API de Marcação de Consultas - Documentação
 
-Bem-vindo ao desafio de backend da Blue Health Tech! Este desafio é uma oportunidade para demonstrar suas habilidades de desenvolvimento de API, compreensão de conceitos de backend, e capacidade de aplicar boas práticas de engenharia de software.
+## Descrição
+Bem-vindo à documentação da API de Marcação de Consultas da Blue Health Tech. Este projeto visa fornecer uma solução robusta e eficiente para a marcação de consultas médicas, oferecendo funcionalidades de autenticação, agendamento, geração de PDF, visualização e modificação/cancelamento de consultas.
 
-## Objetivo
+## Tecnologias Utilizadas
 
-Desenvolver uma API RESTful para a marcação de consultas médicas. A API permitirá que usuários façam login, agendem consultas, visualizem detalhes de suas consultas em PDF, e modifiquem ou cancelem essas consultas.
+- **Symfony Framework (Route Annotation):** Framework PHP versátil para desenvolvimento web, utilizando anotações para definição de rotas.
 
-## Requisitos do Desafio
+- **Doctrine ORM:** Biblioteca PHP para mapeamento objeto-relacional, facilitando a manipulação de bancos de dados através de objetos PHP.
 
-- **Autenticação:** Implemente o login de usuários utilizando JWT.
-- **Agendamento de Consultas:** Permita que os usuários agendem novas consultas.
-- **Geração de PDF:** Após agendar uma consulta, gere um PDF com os detalhes da consulta.
-- **Visualização de Consultas:** Permita que os usuários vejam informações detalhadas sobre suas consultas, a rota deve ser criptografada com um link de acesso único.
-- **Modificação e Cancelamento de Consultas:** Os usuários devem poder modificar detalhes de suas consultas ou cancelá-las.
+- **JWT para Autenticação:** JSON Web Token, um padrão aberto que define uma maneira compacta e autocontida de transmitir informações entre as partes para autenticação.
 
-## Critérios Técnicos
+- **MySQL:** Sistema de gerenciamento de banco de dados relacional, amplamente utilizado em aplicações web.
 
-- **Banco de Dados:** Use o Doctrine para gerenciamento do banco de dados.
-- **Rotas:** Utilize Route Annotation do Symfony para definir as rotas.
-- **Arquitetura:** Siga o padrão MVC para estruturação do projeto.
-- **Tratamento de Erros:** Implemente um sistema de tratamento de erros eficaz.
+- **Docker e Docker-Compose:** Plataforma e ferramenta para empacotamento e distribuição de aplicações em contêineres.
 
-## Entregáveis
+- **PHPUnit:** Framework de teste unitário para PHP, garantindo a integridade e qualidade do código.
 
-- Código-fonte no GitHub com acesso ao repositório fornecido pela equipe da Blue.
-- Documentação no README, detalhando:
-  - Instruções de instalação e execução do projeto.
-  - Descrição das tecnologias utilizadas.
-  - Lista de rotas disponíveis e como utilizá-las.
+- **DomPDF:** Biblioteca PHP para geração de PDF a partir de HTML e CSS, utilizada na criação de documentos para detalhes das consultas médicas.
 
-## Avaliação
+- **Composer:** Gerenciador de dependências para PHP, simplificando a gestão e instalação de bibliotecas.
 
-O desafio será avaliado com base em:
 
-- **Qualidade do Código:** Clareza, uso de boas práticas, padrões de projeto e segurança.
-- **Funcionalidade:** Todos os requisitos devem ser atendidos.
-- **Design da API:** Clareza, consistência, e aderência aos princípios RESTful.
-- **Documentação:** Completa e clara, facilitando a compreensão e uso da API.
+## Instalação e Execução
+⚠️ **Atenção: Antes de prosseguir, certifique-se de ter o Docker e Docker Compose instalados em sua máquina.**
 
-## Como Iniciar
+1. Clone o projeto na sua máquina.
+```bash
+git clone git@github.com:abnerferreiradesousa/desafio-backend.git
+```
 
-1. Faça um fork deste repositório.
-2. Clone seu fork para sua máquina local.
-3. Siga as instruções de instalação específicas para configurar o ambiente de desenvolvimento.
-4. Comece a desenvolver, seguindo os requisitos e critérios técnicos descritos acima.
+2. Entre na pasta do projeto.
+```bash
+cd desafio-backend/blue_appointment_api/
+```
 
-## Entrega
+3. Siga as instruções específicas para configurar o ambiente de desenvolvimento (incluir dependências, configurações do banco de dados, etc.).
+```bash
+docker-compose up --build -d
+```
+⚠️ Talvez você receba `command not found` para o comando acima, nesse caso, tente rodar: 
+```bash
+docker compose up --build -d
+```
 
-Quando estiver pronto para submeter seu desafio, crie um Pull Request do seu repositório forkado para o repositório principal da Blue Company. A equipe de desenvolvimento revisará sua entrega.
+4. Quando terminar, a API estará pronta para receber requisições no endereço [http://localhost:8080/api](http://localhost:8080/api), basta seguir os exemplos na seção [Rotas Disponíveis - Fluxo de Utilização](#registro-de-usuario). Embora o [cURL](https://curl.se/) esteja sendo usado nos exemplos abaixo, o ideal para uma melhor experiência(visualizar o arquivo .pdf) é Postman ou a ferramenta gráfica de sua escolha.
 
-Boa sorte e estamos ansiosos para ver suas soluções inovadoras!
+Este projeto utiliza Docker para facilitar a configuração do ambiente. Certifique-se de ter as ferramentas mencionadas instaladas antes de prosseguir.
+
+## Rotas Disponíveis - Fluxo de Utilização
+
+### Usuários
+#### Registro de Usuário
+- **POST /api/user/register**
+  - Registra um novo usuário.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X POST -H "Content-Type: application/json" -d '{"email": "garfield@gmail.com", "sex": "M", "fullName": "Garfield", "birthDate": "1978-06-19", "password": "lasagna_lover"}' http://localhost:8080/api/user/register
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 200 OK
+    {"patientId": "garfield_user_id"}
+    ```
+
+#### Autenticação - Login
+- **POST /api/login_check**
+  - Realiza o login e retorna um token JWT.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X POST -H "Content-Type: application/json" -d '{"username": "garfield@gmail.com", "password": "lasagna_lover"}' http://localhost:8080/api/login_check
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 200 OK
+    {"token": "garfield_jwt_token"}
+    ```
+
+### Marcação de Consultas Médicas
+#### Criação de Consulta
+- **POST /api/medical-appointments/create**
+  - Cria uma nova consulta médica.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer garfield_jwt_token" -d '{"notes": "Em abril foi parar no hospital depois de comer muita lasagna.", "titleReason": "Check-up", "descriptionReason": "Checagem anual de saúde do Garfield", "appointmentDate": "2023-03-01", "patientId": "garfield_user_id"}' http://localhost:8080/api/medical-appointments/create
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 201 Created
+    {"appointment_details_link": "http://localhost:8080/api/medical-appointments/view/{token}", "appointment_id": "garfield_appointment_id"}
+    ```
+
+#### Visualização de Consulta em PDF
+- **GET /api/medical-appointments/view/{token}**
+  - Visualiza detalhes da consulta em PDF.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X GET -H "Authorization: Bearer garfield_jwt_token" http://localhost:8080/api/medical-appointments/view/{token}
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 200 OK
+    Content-Type: application/pdf
+    ```
+    (Binary PDF content)
+
+#### Modificação de Consulta
+- **PUT /api/medical-appointments/modify/{id}**
+  - Modifica detalhes de uma consulta médica.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X PUT -H "Content-Type: application/json" -H "Authorization: Bearer garfield_jwt_token" -d '{"notes": "Em abril foi parar no hospital depois de comer muita lasagna. E depois disso o médico recomendou que ele fizesse mais exercícios", "titleReason": "Comeu demais de novo", "descriptionReason": "Check-up anual", "appointmentDate": "2023-03-01", "patientId": "garfield_user_id"}' http://localhost:8080/api/medical-appointments/modify/{id}
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 200 OK
+    {"message": "Medical appointment modified successfully"}
+    ```
+
+#### Geração de Link de Acesso à Consulta
+- **POST /api/medical-appointments/access-link-generator/{id}**
+  - Gera um link de acesso para a consulta.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X POST -H "Authorization: Bearer garfield_jwt_token" http://localhost:8080/api/medical-appointments/access-link-generator/{id}
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 201 Created
+    {"appointment_details_link": "http://localhost:8080/api/medical-appointments/view/{token}"}
+    ```
+
+#### Cancelamento de Consulta
+- **DELETE /api/medical-appointments/cancel/{id}**
+  - Cancela uma consulta médica.
+  - **Exemplo de Requisição:**
+    ```bash
+    curl -X DELETE -H "Authorization: Bearer garfield_jwt_token" http://localhost:8080/api/medical-appointments/cancel/{id}
+    ```
+  - **Resposta de Sucesso:**
+    ```http
+    HTTP/1.1 204 No Content
+    ```
+
+## Estrutura do Projeto
+O projeto segue a arquitetura MVC (Model-View-Controller) para uma organização clara e modular. A estrutura básica inclui:
+- `src/`: Contém os controladores, modelos(repository) e serviços.
+- `config/`: Configurações da aplicação, rotas e serviços.
+- `templates/`: Modelo de visualização para geração de PDF.
+
+## Tratamento de Erros
+Em caso de erros, a API retorna mensagens descritivas e códigos de status apropriados. Consulte a documentação específica de cada rota para detalhes sobre possíveis erros.
+
+## Testes Unitários e de Integração
+
+### Testes Realizados
+
+Neste projeto, foram realizados alguns testes unitários e de integração para garantir a robustez e confiabilidade do código. Embora o número de testes seja limitado no momento, o foco é garantir a qualidade das funcionalidades principais.
+
+### Como Rodar os Testes
+
+Para executar os testes unitários e de integração, siga as instruções abaixo:
+
+1. Certifique-se de estar na raiz do projeto:
+```bash
+cd desafio-backend/blue_appointment_api/
+```
+
+2. Construa e inicie os containers Docker (se ainda não estiverem em execução):
+```bash
+docker-compose up --build -d
+```
+
+3. Execute o seguinte comando para rodar os testes dentro do container Docker:
+```bash
+php bin/phpunit
+```
+
+## Referências
+
+1. https://symfony.com/
+2. https://www.binaryboxtuts.com/php-tutorials/generating-pdf-from-html-in-symfony-6/
+3. https://www.youtube.com/watch?v=XjbIDOIoXTo&t=347s
+4. https://docs.docker.com/compose/
+5. https://symfony.com/doc/current/routing.html#creating-routes
+6. https://symfony.com/doc/current/event_dispatcher.html
+7. https://symfony.com/doc/current/testing.html
+8. https://medium.com/accesto/simple-docker-setup-for-symfony-project-accesto-blog-9dc4e3179642
+9. https://www.binaryboxtuts.com/php-tutorials/symfony-6-json-web-tokenjwt-authentication/
+10. https://symfony.com/doc/current/doctrine.html
+11. https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/index.html
+
+## Feedback
+Gostei muito do projeto, sem dúvida pude me desafiar muito! O ponto de melhoria que eu faria é somente:
+
+1. Deixar mais claro o retorno de cada rota, fiquei confuso sobre quando deveria ser retornado o PDF(no momento da criação da consulta ou se o PDF era só pra ser gerado e retornado posteriormente em outra funcionalidade, tendo em vista que tem uma requisito de visualização de detalhes de uma consulta).
+
+No mais, obrigado! Eu gostei muito mesmo do projeto!
